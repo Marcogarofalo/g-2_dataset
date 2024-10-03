@@ -1,0 +1,66 @@
+reset
+set size 1,1
+set terminal cairolatex standalone eps size 25cm,15cm
+set output 'scaling_pert_SD.tex'
+
+
+set xrange [0:0.0082] 
+set yrange [0:3.5]
+
+A= 0.197327
+
+
+
+set border back
+
+set tics format '\Large $%h$'
+
+set key at 0.0028, 3.2 samplen 5.5 width 17 height 1.1 spacing 7.5 font 'Verdana,6'
+
+set arrow from 0.0569252*0.0569252,0 to 0.0569252*0.0569252,3.5 nohead lc rgb 'black' lw 5 dt 2
+set arrow from 0.0682068*0.0682068,0 to 0.0682068*0.0682068,3.5 nohead lc rgb 'black' lw 5 dt 2
+set arrow from 0.079616*0.079616,0 to 0.079616*0.079616,3.5 nohead lc rgb 'black' lw 5 dt 2
+
+set ylabel '\Huge $\Delta a_{\mu}^{SD, pert.}(\ell) \times 10^{10}$' offset -2
+set xlabel '\Huge $a^2~[\textrm{fm}^{2}]$' offset 0,-1
+
+set label at  0.058*0.058,1.2 '\Huge \textsf{D}' 
+set label at  0.0693*0.0693,1.2 '\Huge \textsf{C}' 
+set label at  0.0805*0.0805,1.2 '\Huge \textsf{B}' 
+
+set style fill noborder
+
+set lmargin 15
+set bmargin 5
+set xtics font 'Verdana,20'
+set ytics font 'Verdana,20'
+set mxtics  2
+set mytics 2
+
+
+f(x) = a + b*x
+g(x) = c + d*x
+
+fit [0.0569252*0.0569252:0.079616*0.079616] f(x) 'scaling.dat' u ($2*$2):(-$4*1e10) via a,b
+fit [0.0569252*0.0569252:0.079616*0.079616] g(x) 'scaling.dat' u ($2*$2):(-$3*1e10) via c,d
+
+
+plot 'scaling.dat' u ($2*$2):(-$4*1e10)  ps 1.5 pt 10 lw 6 lc rgb 'dark-blue' title '\huge OS regularization',\
+'' u ($2*$2):(-$3*1e10) ps 1.5 pt 4 lw 6 lc rgb 'dark-red' title '\huge tm regularization',f(x) lw 12 lc rgb 'blue' notitle, g(x) lw 12 lc rgb 'red' notitle
+
+
+
+
+
+
+
+
+unset output
+
+system('latex scaling_pert_SD.tex && dvips -o scaling_pert_SD.eps scaling_pert_SD.dvi')
+system('pdflatex -shell-escape scaling_pert_SD.tex')
+system('rm scaling_pert_SD.dvi && rm scaling_pert_SD.tex && rm scaling_pert_SD.aux && rm scaling_pert_SD.log && rm scaling_pert_SD.eps && rm scaling_pert_SD-inc-eps-converted-to.pdf && rm scaling_pert_SD-inc.eps' )
+
+
+
+system('rm scaling_pert_SD.dvi && rm scaling_pert_SD.tex && rm scaling_pert_SD.aux && rm scaling_pert_SD.log && rm scaling_pert_SD.eps && rm scaling_pert_SD-inc-eps-converted-to.pdf && rm disco_W_Window-inc.eps' )
